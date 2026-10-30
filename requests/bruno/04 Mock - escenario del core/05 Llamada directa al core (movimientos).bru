@@ -1,0 +1,16 @@
+meta {
+  name: Llamada directa al core (movimientos)
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{mock}}/mock/movements/C0001?limit=3
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body.length: eq 3
+}

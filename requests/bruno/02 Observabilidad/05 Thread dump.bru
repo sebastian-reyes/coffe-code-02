@@ -1,0 +1,19 @@
+meta {
+  name: Thread dump
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{api}}/actuator/threaddump
+  body: none
+  auth: none
+}
+
+headers {
+  Accept: text/plain
+}
+
+assert {
+  res.status: eq 200
+}

@@ -1,0 +1,19 @@
+meta {
+  name: Hilos de plataforma vivos
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{api}}/actuator/metrics/jvm.threads.live
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+}
+
+docs {
+  Los hilos virtuales no cuentan aquí.
+}

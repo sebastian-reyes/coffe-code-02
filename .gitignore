@@ -1,0 +1,14 @@
+target/
+logs/
+*.log
+*.pid
+*.jfr
+
+# Resultados de carga locales (los de referencia se versionan en load-tests/results/reference/)
+load-tests/results/*
+!load-tests/results/reference/
+
+.idea/
+*.iml
+.vscode/
+.DS_Store

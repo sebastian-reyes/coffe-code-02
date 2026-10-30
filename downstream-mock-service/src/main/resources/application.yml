@@ -1,0 +1,27 @@
+server:
+  port: 8090
+
+spring:
+  application:
+    name: downstream-mock-service
+
+# Escenario por defecto: latencia uniforme 100-800 ms, sin errores ni timeouts.
+# Cambiar en caliente:  PUT http://localhost:8090/mock/admin/scenario
+mock:
+  latency-min: 100ms
+  latency-max: 800ms
+  error-rate: 0.0
+  timeout-rate: 0.0
+  hang-duration: 30s
+  admin-enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+
+logging:
+  level:
+    root: INFO
+    com.coffeecode: INFO

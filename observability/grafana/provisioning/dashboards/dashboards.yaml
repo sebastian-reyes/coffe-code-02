@@ -1,0 +1,11 @@
+apiVersion: 1
+
+providers:
+  - name: coffee-code
+    folder: Coffee Code
+    type: file
+    allowUiUpdates: true
+    # Relee el JSON cada 10 s: los cambios en el fichero aparecen sin reiniciar Grafana.
+    updateIntervalSeconds: 10
+    options:
+      path: /var/lib/grafana/dashboards

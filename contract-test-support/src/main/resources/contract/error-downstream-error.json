@@ -1,0 +1,6 @@
+{
+  "status": 502,
+  "code": "DOWNSTREAM_ERROR",
+  "message": "El core bancario respondió con un error",
+  "path": "/api/clients/C0001/financial-summary"
+}

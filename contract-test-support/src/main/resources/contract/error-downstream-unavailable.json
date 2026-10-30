@@ -1,0 +1,6 @@
+{
+  "status": 503,
+  "code": "DOWNSTREAM_UNAVAILABLE",
+  "message": "No fue posible conectar con el core bancario",
+  "path": "/api/clients/C0001/financial-summary"
+}

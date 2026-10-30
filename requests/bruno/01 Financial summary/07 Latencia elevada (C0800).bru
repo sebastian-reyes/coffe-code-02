@@ -1,0 +1,20 @@
+meta {
+  name: Latencia elevada (C0800)
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{api}}/api/clients/C0800/financial-summary
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.responseTime: gt 1400
+}
+
+docs {
+  1,5 s en cada endpoint del core: lento pero por debajo del timeout de 2 s.
+}

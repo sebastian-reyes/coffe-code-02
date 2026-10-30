@@ -1,0 +1,14 @@
+{
+  "clientId": "C0001",
+  "fullName": "Ana Torres",
+  "segment": "PREMIUM",
+  "account": {
+    "accountNumber": "0012-0001-123456",
+    "currency": "COP",
+    "availableBalance": 1520000.50,
+    "ledgerBalance": 1600000.50,
+    "heldAmount": 80000.00
+  },
+  "recentMovements": [],
+  "warnings": ["MOVEMENTS_UNAVAILABLE"]
+}

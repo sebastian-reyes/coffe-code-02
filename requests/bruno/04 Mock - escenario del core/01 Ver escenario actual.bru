@@ -1,0 +1,15 @@
+meta {
+  name: Ver escenario actual
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{mock}}/mock/admin/scenario
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+}

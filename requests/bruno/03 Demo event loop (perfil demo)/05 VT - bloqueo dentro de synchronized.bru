@@ -1,0 +1,20 @@
+meta {
+  name: VT - bloqueo dentro de synchronized
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{vtUrl}}/api/demo/legacy-score/C0001?mode=synchronized
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body.virtual: eq true
+}
+
+docs {
+  Requiere las APIs con el perfil demo (PROFILE=demo ./scripts/start-all.sh). Usan URLs fijas, no {{api}}. Desde Java 24 (JEP 491) synchronized ya no ancla el hilo virtual a su carrier.
+}

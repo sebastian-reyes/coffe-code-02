@@ -1,0 +1,28 @@
+global:
+  scrape_interval: 5s
+  evaluation_interval: 5s
+
+# Prometheus se arranca (docker-compose.yml) con:
+#   --web.enable-remote-write-receiver   -> k6 envía sus métricas con -o experimental-prometheus-rw
+#   --enable-feature=exemplar-storage    -> guarda exemplars (trace_id) de los histogramas -> enlace a Tempo
+scrape_configs:
+  - job_name: banking-api-webflux
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ["host.docker.internal:8081"]
+
+  - job_name: banking-api-virtual-threads
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ["host.docker.internal:8082"]
+
+# Consultas útiles (también están en el dashboard de Grafana):
+#   p95 por API:
+#     histogram_quantile(0.95, sum by (le, implementation) (rate(http_server_requests_seconds_bucket{uri="/api/clients/{clientId}/financial-summary"}[30s])))
+#   RPS por status:
+#     sum by (implementation, status) (rate(http_server_requests_seconds_count{uri="/api/clients/{clientId}/financial-summary"}[30s]))
+#   Conexiones del pool en uso / esperando:
+#     reactor_netty_connection_provider_active_connections{name="core-banking"}
+#     httpcomponents_httpclient_pool_total_connections{httpclient="core-banking",state="leased"}
+#     reactor_netty_connection_provider_pending_connections{name="core-banking"}
+#     httpcomponents_httpclient_pool_total_pending{httpclient="core-banking"}

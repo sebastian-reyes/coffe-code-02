@@ -1,0 +1,19 @@
+meta {
+  name: Conexiones del pool hacia el core
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{api}}/actuator/metrics/{{poolMetric}}
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+}
+
+docs {
+  WebFlux: reactor.netty.connection.provider.active.connections. VT: httpcomponents.httpclient.pool.total.connections (tag state=leased|available). Lo fija el entorno.
+}

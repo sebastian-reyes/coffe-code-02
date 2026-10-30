@@ -1,0 +1,21 @@
+meta {
+  name: Timeout del saldo (C0504)
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{api}}/api/clients/C0504/financial-summary
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 504
+  res.body.code: eq DOWNSTREAM_TIMEOUT
+  res.responseTime: gt 1900
+}
+
+docs {
+  El core se cuelga 30 s; la API corta a los ~2 s (banking.downstream.response-timeout).
+}

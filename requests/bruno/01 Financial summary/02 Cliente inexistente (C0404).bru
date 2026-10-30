@@ -1,0 +1,16 @@
+meta {
+  name: Cliente inexistente (C0404)
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{api}}/api/clients/C0404/financial-summary
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 404
+  res.body.code: eq CLIENT_NOT_FOUND
+}

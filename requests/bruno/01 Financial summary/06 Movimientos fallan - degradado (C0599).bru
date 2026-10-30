@@ -1,0 +1,21 @@
+meta {
+  name: Movimientos fallan - degradado (C0599)
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{api}}/api/clients/C0599/financial-summary
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body.warnings[0]: eq MOVEMENTS_UNAVAILABLE
+  res.body.recentMovements: isEmpty
+}
+
+docs {
+  Movimientos es opcional: si falla se responde 200 con warnings.
+}

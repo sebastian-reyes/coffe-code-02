@@ -1,0 +1,238 @@
+{
+  "info": {
+    "name": "Coffee Code #2 - WebFlux vs Virtual Threads",
+    "description": "Cambia la variable api entre http://localhost:8081 (WebFlux) y http://localhost:8082 (Virtual Threads).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "api",
+      "value": "http://localhost:8081"
+    },
+    {
+      "key": "mock",
+      "value": "http://localhost:8090"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Éxito",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{api}}/api/clients/C0001/financial-summary"
+        }
+      }
+    },
+    {
+      "name": "2. Cliente inexistente -> 404 CLIENT_NOT_FOUND",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{api}}/api/clients/C0404/financial-summary"
+        }
+      }
+    },
+    {
+      "name": "3. ID inválido -> 400 INVALID_CLIENT_ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{api}}/api/clients/12345/financial-summary"
+        }
+      }
+    },
+    {
+      "name": "4. Saldo responde 500 -> 502 DOWNSTREAM_ERROR",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{api}}/api/clients/C0500/financial-summary"
+        }
+      }
+    },
+    {
+      "name": "5. Saldo se cuelga -> 504 DOWNSTREAM_TIMEOUT a los ~2 s",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{api}}/api/clients/C0504/financial-summary"
+        }
+      }
+    },
+    {
+      "name": "6. Movimientos fallan -> 200 degradado con warnings",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{api}}/api/clients/C0599/financial-summary"
+        }
+      }
+    },
+    {
+      "name": "7. Latencia elevada (1.5 s) sin superar el timeout -> 200 lento",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{api}}/api/clients/C0800/financial-summary"
+        }
+      }
+    },
+    {
+      "name": "8. Health (incluye coreBanking)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{api}}/actuator/health"
+        }
+      }
+    },
+    {
+      "name": "9. Métricas del pool (WebFlux)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8081/actuator/metrics/reactor.netty.connection.provider.active.connections"
+        }
+      }
+    },
+    {
+      "name": "10. Métricas del pool (Virtual Threads)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8082/actuator/metrics/httpcomponents.httpclient.pool.total.connections"
+        }
+      }
+    },
+    {
+      "name": "11. Latencia del endpoint (percentiles en /actuator/prometheus)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{api}}/actuator/metrics/http.server.requests?tag=uri:/api/clients/{clientId}/financial-summary"
+        }
+      }
+    },
+    {
+      "name": "12. Thread dump",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "text/plain"
+          }
+        ],
+        "url": {
+          "raw": "{{api}}/actuator/threaddump"
+        }
+      }
+    },
+    {
+      "name": "13. Demo WebFlux: bloqueo en el event loop (perfil demo)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8081/api/demo/legacy-score/C0001?mode=event-loop"
+        }
+      }
+    },
+    {
+      "name": "14. Demo WebFlux: block() en el event loop -> 500 (IllegalStateException en el log)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8081/api/demo/legacy-score/C0001?mode=block"
+        }
+      }
+    },
+    {
+      "name": "15. Demo WebFlux: bloqueo aislado en boundedElastic",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8081/api/demo/legacy-score/C0001?mode=offload"
+        }
+      }
+    },
+    {
+      "name": "16. Demo VT: bloqueo directo en hilo virtual",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8082/api/demo/legacy-score/C0001?mode=direct"
+        }
+      }
+    },
+    {
+      "name": "17. Ver escenario actual",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{mock}}/mock/admin/scenario"
+        }
+      }
+    },
+    {
+      "name": "18. Degradar el core: 20% de 503 y latencia 300-1500 ms",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{mock}}/mock/admin/scenario"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"latencyMinMs\": 300, \"latencyMaxMs\": 1500, \"errorRate\": 0.2, \"timeoutRate\": 0.0, \"hangMs\": 30000}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "19. Restaurar el escenario por defecto",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{mock}}/mock/admin/scenario/reset"
+        }
+      }
+    },
+    {
+      "name": "20. Llamada directa al core simulado",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{mock}}/mock/clients/C0001"
+        }
+      }
+    }
+  ]
+}

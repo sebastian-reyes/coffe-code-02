@@ -1,0 +1,5 @@
+# Perfil opcional: arranca el mock ya degradado (10% de 503, 2% de respuestas colgadas).
+#   mvn -pl downstream-mock-service spring-boot:run -Dspring-boot.run.profiles=chaos
+mock:
+  error-rate: 0.10
+  timeout-rate: 0.02

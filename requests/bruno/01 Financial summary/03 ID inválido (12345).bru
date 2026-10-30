@@ -1,0 +1,20 @@
+meta {
+  name: ID inválido (12345)
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{api}}/api/clients/12345/financial-summary
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 400
+  res.body.code: eq INVALID_CLIENT_ID
+}
+
+docs {
+  El clientId debe cumplir ^C\d{4}$. No llega a llamar al core.
+}

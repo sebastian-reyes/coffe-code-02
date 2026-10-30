@@ -1,0 +1,6 @@
+{
+  "status": 404,
+  "code": "CLIENT_NOT_FOUND",
+  "message": "El cliente no existe en el core bancario",
+  "path": "/api/clients/C0001/financial-summary"
+}

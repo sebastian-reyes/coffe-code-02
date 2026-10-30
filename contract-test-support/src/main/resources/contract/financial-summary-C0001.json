@@ -1,0 +1,17 @@
+{
+  "clientId": "C0001",
+  "fullName": "Ana Torres",
+  "segment": "PREMIUM",
+  "account": {
+    "accountNumber": "0012-0001-123456",
+    "currency": "COP",
+    "availableBalance": 1520000.50,
+    "ledgerBalance": 1600000.50,
+    "heldAmount": 80000.00
+  },
+  "recentMovements": [
+    {"movementId": "MV-0001-1", "bookingDate": "2026-10-01", "description": "Pago nómina", "amount": 4500000.00, "type": "CREDIT"},
+    {"movementId": "MV-0001-2", "bookingDate": "2026-09-30", "description": "Supermercado", "amount": -235000.75, "type": "DEBIT"}
+  ],
+  "warnings": []
+}

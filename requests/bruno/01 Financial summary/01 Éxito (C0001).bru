@@ -1,0 +1,22 @@
+meta {
+  name: Éxito (C0001)
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{api}}/api/clients/C0001/financial-summary
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body.clientId: eq C0001
+  res.body.warnings: isEmpty
+  res.headers['x-implementation']: eq {{implementation}}
+}
+
+docs {
+  Tres llamadas concurrentes al core (cliente, saldo, movimientos). Latencia ~ la de la más lenta (100-800 ms).
+}

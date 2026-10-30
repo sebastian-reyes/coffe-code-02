@@ -1,0 +1,20 @@
+meta {
+  name: Grafana health
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{grafana}}/api/health
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body.database: eq ok
+}
+
+docs {
+  Solo con docker compose up -d. Dashboard: {{grafana}}/d/webflux-vs-vt
+}

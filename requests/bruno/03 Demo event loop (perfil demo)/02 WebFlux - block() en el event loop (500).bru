@@ -1,0 +1,20 @@
+meta {
+  name: WebFlux - block() en el event loop (500)
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{webfluxUrl}}/api/demo/legacy-score/C0001?mode=block
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 500
+  res.body.code: eq INTERNAL_ERROR
+}
+
+docs {
+  Requiere las APIs con el perfil demo (PROFILE=demo ./scripts/start-all.sh). Usan URLs fijas, no {{api}}. Reactor lanza IllegalStateException: block()/blockFirst()/blockLast() are blocking... (ver log).
+}

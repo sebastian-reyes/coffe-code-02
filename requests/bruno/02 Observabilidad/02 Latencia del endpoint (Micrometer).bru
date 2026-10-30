@@ -1,0 +1,20 @@
+meta {
+  name: Latencia del endpoint (Micrometer)
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{api}}/actuator/metrics/http.server.requests?tag=uri:%2Fapi%2Fclients%2F%7BclientId%7D%2Ffinancial-summary
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body.name: eq http.server.requests
+}
+
+docs {
+  Ejecutar antes alguna petición de la carpeta 01; si no, la métrica no existe todavía (404).
+}

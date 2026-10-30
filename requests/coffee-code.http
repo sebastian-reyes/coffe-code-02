@@ -1,0 +1,69 @@
+### Peticiones de ejemplo (IntelliJ HTTP Client / VS Code REST Client).
+### Cambia @api entre :8081 (WebFlux) y :8082 (Virtual Threads).
+@api = http://localhost:8081
+@mock = http://localhost:8090
+
+### 1. Éxito
+GET {{api}}/api/clients/C0001/financial-summary
+
+### 2. Cliente inexistente -> 404 CLIENT_NOT_FOUND
+GET {{api}}/api/clients/C0404/financial-summary
+
+### 3. ID inválido -> 400 INVALID_CLIENT_ID
+GET {{api}}/api/clients/12345/financial-summary
+
+### 4. Saldo responde 500 -> 502 DOWNSTREAM_ERROR
+GET {{api}}/api/clients/C0500/financial-summary
+
+### 5. Saldo se cuelga -> 504 DOWNSTREAM_TIMEOUT a los ~2 s
+GET {{api}}/api/clients/C0504/financial-summary
+
+### 6. Movimientos fallan -> 200 degradado con warnings
+GET {{api}}/api/clients/C0599/financial-summary
+
+### 7. Latencia elevada (1.5 s) sin superar el timeout -> 200 lento
+GET {{api}}/api/clients/C0800/financial-summary
+
+### 8. Health (incluye coreBanking)
+GET {{api}}/actuator/health
+
+### 9. Métricas del pool (WebFlux)
+GET http://localhost:8081/actuator/metrics/reactor.netty.connection.provider.active.connections
+
+### 10. Métricas del pool (Virtual Threads)
+GET http://localhost:8082/actuator/metrics/httpcomponents.httpclient.pool.total.connections
+
+### 11. Latencia del endpoint (percentiles en /actuator/prometheus)
+GET {{api}}/actuator/metrics/http.server.requests?tag=uri:/api/clients/{clientId}/financial-summary
+
+### 12. Thread dump
+GET {{api}}/actuator/threaddump
+Accept: text/plain
+
+### 13. Demo WebFlux: bloqueo en el event loop (perfil demo)
+GET http://localhost:8081/api/demo/legacy-score/C0001?mode=event-loop
+
+### 14. Demo WebFlux: block() en el event loop -> 500 (IllegalStateException en el log)
+GET http://localhost:8081/api/demo/legacy-score/C0001?mode=block
+
+### 15. Demo WebFlux: bloqueo aislado en boundedElastic
+GET http://localhost:8081/api/demo/legacy-score/C0001?mode=offload
+
+### 16. Demo VT: bloqueo directo en hilo virtual
+GET http://localhost:8082/api/demo/legacy-score/C0001?mode=direct
+
+### --- Mock: escenario en caliente ---
+### 17. Ver escenario actual
+GET {{mock}}/mock/admin/scenario
+
+### 18. Degradar el core: 20% de 503 y latencia 300-1500 ms
+PUT {{mock}}/mock/admin/scenario
+Content-Type: application/json
+
+{"latencyMinMs": 300, "latencyMaxMs": 1500, "errorRate": 0.2, "timeoutRate": 0.0, "hangMs": 30000}
+
+### 19. Restaurar el escenario por defecto
+POST {{mock}}/mock/admin/scenario/reset
+
+### 20. Llamada directa al core simulado
+GET {{mock}}/mock/clients/C0001

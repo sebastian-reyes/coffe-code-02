@@ -1,0 +1,20 @@
+meta {
+  name: VT - bloqueo directo en hilo virtual
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{vtUrl}}/api/demo/legacy-score/C0001?mode=direct
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body.virtual: eq true
+}
+
+docs {
+  Requiere las APIs con el perfil demo (PROFILE=demo ./scripts/start-all.sh). Usan URLs fijas, no {{api}}. Mismo código bloqueante: en un hilo virtual es correcto.
+}

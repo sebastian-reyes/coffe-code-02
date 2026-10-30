@@ -1,0 +1,19 @@
+# Perfil de observabilidad completa: trazas OTLP a Tempo (docker compose up -d).
+#   PROFILE=observability ./scripts/start-all.sh        (o PROFILE=demo,observability)
+# Mismos valores que banking-api-webflux. Para medir rendimiento, comparar ambas APIs con
+# este perfil activo en las dos o en ninguna: el tracing tiene un coste.
+#
+# La traza viaja en un ThreadLocal del hilo virtual de la petición. Para que llegue a las tres llamadas
+# que se lanzan en otros hilos virtuales, FailFastTasks la propaga con context-propagation.
+management:
+  tracing:
+    export:
+      enabled: true
+    sampling:
+      probability: 1.0
+  opentelemetry:
+    tracing:
+      export:
+        schedule-delay: 1s
+        otlp:
+          endpoint: http://localhost:4318/v1/traces

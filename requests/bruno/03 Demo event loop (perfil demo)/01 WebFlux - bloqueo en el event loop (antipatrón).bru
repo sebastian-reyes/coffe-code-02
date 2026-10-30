@@ -1,0 +1,20 @@
+meta {
+  name: WebFlux - bloqueo en el event loop (antipatrón)
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{webfluxUrl}}/api/demo/legacy-score/C0001?mode=event-loop
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body.thread: contains -http-nio-
+}
+
+docs {
+  Requiere las APIs con el perfil demo (PROFILE=demo ./scripts/start-all.sh). Usan URLs fijas, no {{api}}. El Thread.sleep(300) corre en un hilo del event loop: no falla, pero bajo carga lo frena todo.
+}

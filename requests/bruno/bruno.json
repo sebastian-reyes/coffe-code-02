@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "Coffee Code #2 - WebFlux vs Virtual Threads",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

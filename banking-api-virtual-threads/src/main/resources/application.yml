@@ -1,0 +1,53 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: banking-api-virtual-threads
+  threads:
+    virtual:
+      # Tomcat atiende cada petición en un hilo virtual (y también @Async, schedulers, etc.).
+      enabled: true
+
+# ---- Mismos valores que banking-api-webflux (ver docs/architecture.md, "Comparabilidad") ----
+banking:
+  downstream:
+    base-url: http://localhost:8090
+    connect-timeout: 1s
+    response-timeout: 2s
+    pending-acquire-timeout: 1s
+    max-connections: 500
+    max-idle-time: 30s
+    movements-limit: 5
+  demo:
+    blocking-endpoints-enabled: false
+
+management:
+  # Tracing apagado por defecto: el benchmark no paga su coste. Se activa con el perfil "observability".
+  tracing:
+    export:
+      enabled: false
+  # Las métricas se publican por scrape (/actuator/prometheus), no por push OTLP.
+  otlp:
+    metrics:
+      export:
+        enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,threaddump
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+        http.client.requests: true
+    tags:
+      implementation: virtual-threads
+
+logging:
+  level:
+    root: INFO
+    com.coffeecode: INFO

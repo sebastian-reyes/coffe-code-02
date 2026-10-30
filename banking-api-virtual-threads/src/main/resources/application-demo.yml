@@ -1,0 +1,9 @@
+# Perfil para la charla: logs DEBUG (muestran en qué hilo corre cada llamada) y endpoints de demo.
+#   mvn -pl banking-api-virtual-threads spring-boot:run -Dspring-boot.run.profiles=demo
+banking:
+  demo:
+    blocking-endpoints-enabled: true
+
+logging:
+  level:
+    com.coffeecode: DEBUG

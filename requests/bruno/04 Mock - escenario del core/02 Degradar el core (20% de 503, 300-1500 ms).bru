@@ -1,0 +1,34 @@
+meta {
+  name: Degradar el core (20% de 503, 300-1500 ms)
+  type: http
+  seq: 2
+}
+
+put {
+  url: {{mock}}/mock/admin/scenario
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "latencyMinMs": 300,
+    "latencyMaxMs": 1500,
+    "errorRate": 0.2,
+    "timeoutRate": 0.0,
+    "hangMs": 30000
+  }
+}
+
+assert {
+  res.status: eq 200
+  res.body.errorRate: eq 0.2
+}
+
+docs {
+  Afecta a las DOS APIs. Restaurar después con la petición 03.
+}

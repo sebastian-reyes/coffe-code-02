@@ -1,0 +1,59 @@
+# OPCIONAL. El laboratorio funciona sin Docker (solo Maven + Java 25).
+# Las tres aplicaciones se ejecutan en el host; aquí solo está la observabilidad.
+#
+#   docker compose up -d                 # Grafana http://localhost:3000 · Prometheus :9090 · Tempo :3200
+#   PROFILE=observability ./scripts/start-all.sh      # APIs enviando trazas a Tempo
+#   k6 run -o experimental-prometheus-rw ...          # métricas de k6 a Prometheus (ver docs/observability.md)
+#   docker compose down                  # parar (los datos no se conservan)
+#
+# Guía completa: docs/observability.md
+services:
+  prometheus:
+    image: prom/prometheus:v3.13.4
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.retention.time=1d
+      - --web.enable-remote-write-receiver
+      - --enable-feature=exemplar-storage
+    volumes:
+      - ./observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  tempo:
+    image: grafana/tempo:2.10.10
+    command: ["-config.file=/etc/tempo.yaml"]
+    volumes:
+      - ./observability/tempo.yaml:/etc/tempo.yaml:ro
+    ports:
+      - "3200:3200"   # API de consulta (Grafana)
+      - "4317:4317"   # OTLP gRPC
+      - "4318:4318"   # OTLP HTTP <- las APIs envían aquí sus trazas
+
+  grafana:
+    image: grafana/grafana:13.2.4
+    depends_on: [prometheus, tempo]
+    environment:
+      # Solo para la demo local: acceso anónimo como admin, sin pantalla de login.
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
+      GF_AUTH_DISABLE_LOGIN_FORM: "true"
+      GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: /var/lib/grafana/dashboards/webflux-vs-virtual-threads.json
+      GF_ANALYTICS_REPORTING_ENABLED: "false"
+      GF_ANALYTICS_CHECK_FOR_UPDATES: "false"
+    volumes:
+      - ./observability/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./observability/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports:
+      - "3000:3000"
+
+  # Alternativa a k6 nativo:  docker compose run --rm k6 run ... /scripts/financial-summary.js
+  k6:
+    image: grafana/k6:2.3.0
+    profiles: ["tools"]
+    volumes:
+      - ./load-tests:/scripts
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

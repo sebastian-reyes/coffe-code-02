@@ -1,0 +1,6 @@
+{
+  "status": 504,
+  "code": "DOWNSTREAM_TIMEOUT",
+  "message": "El core bancario no respondió a tiempo",
+  "path": "/api/clients/C0001/financial-summary"
+}

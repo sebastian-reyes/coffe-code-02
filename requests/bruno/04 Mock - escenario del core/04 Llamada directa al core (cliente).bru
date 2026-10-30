@@ -1,0 +1,16 @@
+meta {
+  name: Llamada directa al core (cliente)
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{mock}}/mock/clients/C0001
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body.clientId: eq C0001
+}

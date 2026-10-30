@@ -1,0 +1,23 @@
+# Perfil de observabilidad completa: trazas OTLP a Tempo (docker compose up -d).
+#   PROFILE=observability ./scripts/start-all.sh        (o PROFILE=demo,observability)
+# Mismos valores que banking-api-virtual-threads. Para medir rendimiento, comparar ambas APIs con
+# este perfil activo en las dos o en ninguna: el tracing tiene un coste.
+management:
+  tracing:
+    export:
+      enabled: true
+    sampling:
+      probability: 1.0
+  opentelemetry:
+    tracing:
+      export:
+        schedule-delay: 1s
+        otlp:
+          endpoint: http://localhost:4318/v1/traces
+
+spring:
+  reactor:
+    # Copia el contexto de Reactor (traza actual) a ThreadLocal/MDC en cada operador: así los logs de
+    # WebFlux también llevan traceId/spanId. Sin esto, la traza se propaga igual a WebClient (por el
+    # Reactor Context), pero el MDC de los logs queda vacío.
+    context-propagation: auto

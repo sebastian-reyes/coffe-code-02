@@ -1,0 +1,6 @@
+{
+  "status": 400,
+  "code": "INVALID_CLIENT_ID",
+  "message": "El clientId debe tener el formato C#### (ej. C0001)",
+  "path": "/api/clients/12345/financial-summary"
+}

@@ -1,0 +1,20 @@
+meta {
+  name: Saldo responde 500 (C0500)
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{api}}/api/clients/C0500/financial-summary
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 502
+  res.body.code: eq DOWNSTREAM_ERROR
+}
+
+docs {
+  Fail-fast: el saldo es obligatorio. Con tracing activo, en Tempo se ve cómo se cancelan las otras dos llamadas.
+}

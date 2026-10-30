@@ -1,0 +1,17 @@
+meta {
+  name: Restaurar escenario por defecto
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{mock}}/mock/admin/scenario/reset
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body.errorRate: eq 0
+  res.body.latencyMinMs: eq 100
+}
